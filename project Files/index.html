@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rice Grain Classifier</title>
+</head>
+<body>
+    <h1>Upload a Rice Grain Image</h1>
+    <form action="/predict" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required>
+        <input type="submit" value="Predict">
+    </form>
+</body>
+</html>
