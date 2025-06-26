@@ -56,4 +56,4 @@ model.fit(
 
 # Step 5: Save the model
 model.save("rice_model.h5")
-print("✅ Model saved as rice_model.h5")
+print("Model saved as rice_model.h5")
