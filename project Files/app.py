@@ -1,46 +1,40 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, render_template, request
+import numpy as np
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
-import numpy as np
 import os
-from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+model = load_model("rice_model.h5")
 
-MODEL_PATH = 'rice_model.h5'
-model = load_model(MODEL_PATH)
-
+# Class names — update based on your dataset
 class_names = ['Arborio', 'Basmati', 'Ipsala', 'Jasmine', 'Karacadag']
 
-UPLOAD_FOLDER = 'static/uploads/'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
     if 'file' not in request.files:
-        return redirect(request.url)
+        return "No file uploaded"
+    
     file = request.files['file']
     if file.filename == '':
-        return redirect(request.url)
-    if file:
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
+        return "No image selected"
+    
+    filepath = os.path.join("static", file.filename)
+    file.save(filepath)
 
-        img = image.load_img(filepath, target_size=(224, 224))
-        x = image.img_to_array(img) / 255.0
-        x = np.expand_dims(x, axis=0)
+    img = image.load_img(filepath, target_size=(224, 224))  # Resize as per model
+    img_array = image.img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0)
+    img_array /= 255.0  # Normalize if model trained on normalized images
 
-        pred = model.predict(x)[0]
-        idx = np.argmax(pred)
-        result = f"{class_names[idx]} ({round(pred[idx]*100, 2)}%)"
+    prediction = model.predict(img_array)
+    predicted_class = class_names[np.argmax(prediction)]
 
-        return render_template('result.html', prediction=result, img_path=filepath)
+    return render_template('index.html', prediction=predicted_class, image_path=filepath)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
