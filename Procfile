@@ -1,3 +1,1 @@
-git add Procfile
-git commit -m "Fix: correct Streamlit Procfile for Render"
-git push origin main
+web: sh -c 'streamlit run grain_palette_app.py --server.port=$PORT --server.address=0.0.0.0'
