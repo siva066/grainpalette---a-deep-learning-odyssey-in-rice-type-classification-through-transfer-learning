@@ -1,1 +1,1 @@
-web: gunicorn app:app
+web: gunicorn grain_palette_app:app
