@@ -1,6 +1,4 @@
 flask
 tensorflow
+pillow
 numpy
-pandas
-Pillow
-gunicorn
