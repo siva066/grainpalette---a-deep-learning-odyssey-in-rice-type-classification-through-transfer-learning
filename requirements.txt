@@ -1,4 +1,6 @@
-streamlit
-tensorflow==2.20.0
-Pillow
+flask
+tensorflow
 numpy
+pandas
+Pillow
+gunicorn
